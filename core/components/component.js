@@ -1,15 +1,4 @@
-let currentComponent = null;
-
-function useState(initialState) {
-    const component = currentComponent;
-    const [state, setState] = component.stateHook(initialState);
-    return [state, setState];
-}
-
-function useEffect(effect, deps) {
-    const component = currentComponent;
-    component.effectHook(effect, deps);
-}
+import { useEffect, useState } from "../hooks";
 
 class Component {
     constructor(props) {
@@ -75,4 +64,3 @@ class Component {
 }
 
 export default Component;
-export { useState, useEffect };
