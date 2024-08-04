@@ -1,4 +1,8 @@
-export function useEffect(effect, deps) {
+function useEffect(effect, deps) {
     const component = currentComponent;
-    component.effectHook(effect, deps);
+    component.effectHook(async () => {
+        await effect();
+    }, deps);
 }
+
+export { useEffect };

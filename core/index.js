@@ -1,11 +1,13 @@
 export { default as Component } from './components/component';
-export { render } from './rendering/render';
-export { default as Context } from './state/Context';
-export { useState } from './state/useState';
-export { useContext } from './state/useContext';
+export { render } from './renderer/Renderer';
+export { useState } from './hooks/useState';
+export { useEffect } from './hooks/useEffect';
+export { useMemo } from './hooks/useMemo';
 export { default as EventEmitter } from './events/EventEmitter';
 export { deepClone } from './utils/deepClone';
 export { deepMerge } from './utils/deepMerge';
 export { default as apiClient } from './api/apiClient';
 export { validateJsonResponse } from './api/responseValidator';
 export { API_ROUTES } from './api/routes';
+export { default as Context } from './state/Context';
+export { useContext } from './state/useContext';
