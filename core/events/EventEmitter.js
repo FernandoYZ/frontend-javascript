@@ -1,6 +1,7 @@
 class EventEmitter {
   constructor() {
       this.events = new Map();
+      this.queue = [];
   }
 
   on(event, listener) {
@@ -12,7 +13,10 @@ class EventEmitter {
 
   emit(event, ...args) {
       if (this.events.has(event)) {
-          this.events.get(event).forEach(listener => listener(...args));
+          this.queue.push({ event, args });
+          if (this.queue.length === 1) {
+              this._processQueue();
+          }
       }
   }
 
@@ -24,6 +28,13 @@ class EventEmitter {
           } else {
               this.events.delete(event);
           }
+      }
+  }
+
+  _processQueue() {
+      while (this.queue.length > 0) {
+          const { event, args } = this.queue.shift();
+          this.events.get(event).forEach(listener => listener(...args));
       }
   }
 }
