@@ -4,10 +4,13 @@ class VirtualDOM {
     }
 
     static render(vnode, container) {
+        const dom = this.createDOMElement(vnode);
+        container.appendChild(dom);
+    }
+
+    static createDOMElement(vnode) {
         if (typeof vnode === 'string') {
-            const textNode = document.createTextNode(vnode);
-            container.appendChild(textNode);
-            return;
+            return document.createTextNode(vnode);
         }
 
         const { tag, props, children } = vnode;
@@ -17,17 +20,35 @@ class VirtualDOM {
             domNode[key] = value;
         });
 
-        children.forEach(child => this.render(child, domNode));
+        children.forEach(child => {
+            const childNode = this.createDOMElement(child);
+            domNode.appendChild(childNode);
+        });
 
-        container.appendChild(domNode);
+        return domNode;
     }
 
-    static diffAndUpdate(oldVNode, newVNode, container) {
+    static diffAndUpdate(container, oldVNode, newVNode) {
         if (!oldVNode) {
-            VirtualDOM.render(newVNode, container);
-        } else {
-            // Por definir la lógica de diff y actualización del DOM real
+            this.render(newVNode, container);
+        } else if (!newVNode) {
+            container.removeChild(container.childNodes[0]);
+        } else if (this.hasChanged(oldVNode, newVNode)) {
+            container.replaceChild(this.createDOMElement(newVNode), container.childNodes[0]);
+        } else if (newVNode.tag) {
+            const oldChildren = oldVNode.children || [];
+            const newChildren = newVNode.children || [];
+            const max = Math.max(oldChildren.length, newChildren.length);
+            for (let i = 0; i < max; i++) {
+                this.diffAndUpdate(container.childNodes[0], oldChildren[i], newChildren[i]);
+            }
         }
+    }
+
+    static hasChanged(oldVNode, newVNode) {
+        return typeof oldVNode !== typeof newVNode ||
+            typeof oldVNode === 'string' && oldVNode !== newVNode ||
+            oldVNode.tag !== newVNode.tag;
     }
 }
 
