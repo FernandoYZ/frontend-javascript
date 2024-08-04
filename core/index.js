@@ -1,6 +1,8 @@
 export { default as Component } from './components/component';
 export { render } from './rendering/render';
+export { default as Context } from './state/Context';
 export { useState } from './state/useState';
+export { useContext } from './state/useContext';
 export { default as EventEmitter } from './events/EventEmitter';
 export { deepClone } from './utils/deepClone';
 export { deepMerge } from './utils/deepMerge';
