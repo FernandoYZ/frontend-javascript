@@ -1,9 +1,8 @@
 function validateJsonResponse(response) {
-    if (!response || typeof response !== 'object') {
+  if (!response || typeof response !== 'object') {
       throw new Error("Invalid JSON response");
-    }
-    return true;
   }
-  
-  export { validateJsonResponse };
-  
+  return true;
+}
+
+export { validateJsonResponse };
