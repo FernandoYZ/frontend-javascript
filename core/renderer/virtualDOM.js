@@ -1,3 +1,5 @@
+import { html } from '../../libs/hyperhtml.min.js';
+
 class VirtualDOM {
     static createElement(tag, props, ...children) {
         return { tag, props, children };
@@ -17,7 +19,15 @@ class VirtualDOM {
         const domNode = document.createElement(tag);
 
         Object.entries(props || {}).forEach(([key, value]) => {
-            domNode[key] = value;
+            if (key.startsWith('on')) {
+                domNode.addEventListener(key.substring(2).toLowerCase(), value);
+            } else if (key === 'className') {
+                domNode.className = value;
+            } else if (key === 'style') {
+                Object.assign(domNode.style, value);
+            } else {
+                domNode[key] = value;
+            }
         });
 
         children.forEach(child => {
@@ -40,15 +50,19 @@ class VirtualDOM {
             const newChildren = newVNode.children || [];
             const max = Math.max(oldChildren.length, newChildren.length);
             for (let i = 0; i < max; i++) {
-                this.diffAndUpdate(container.childNodes[0], oldChildren[i], newChildren[i]);
+                this.diffAndUpdate(container.childNodes[i], oldChildren[i], newChildren[i]);
             }
         }
     }
 
     static hasChanged(oldVNode, newVNode) {
         return typeof oldVNode !== typeof newVNode ||
-            typeof oldVNode === 'string' && oldVNode !== newVNode ||
+            (typeof oldVNode === 'string' && oldVNode !== newVNode) ||
             oldVNode.tag !== newVNode.tag;
+    }
+
+    static createTemplate(strings, ...values) {
+        return html(strings, ...values);
     }
 }
 

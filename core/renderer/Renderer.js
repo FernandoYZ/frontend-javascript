@@ -1,20 +1,25 @@
-import VirtualDOM from './virtualDOM';
+import { h, render } from '../../libs/preact.min.js';
+import { html } from '../../libs/hyperhtml.min.js';
 
 class Renderer {
     static renderComponent(component, container) {
+        if (!container) {
+            throw new Error('Container is null. Proporcione un elemento DOM válido.');
+        }
+
         const newVNode = component.render();
         requestAnimationFrame(() => {
-            if (container) {
-                if (!component._currentVNode) {
-                    VirtualDOM.render(newVNode, container);
-                } else {
-                    VirtualDOM.diffAndUpdate(container, component._currentVNode, newVNode);
-                }
-                component._currentVNode = newVNode;
+            if (!component._currentVNode) {
+                render(newVNode, container);
             } else {
-                console.error('Container null. Asegúrese de pasar un elemento DOM válido.');
+                render(newVNode, container, component._currentVNode);
             }
+            component._currentVNode = newVNode;
         });
+    }
+
+    static createTemplate(strings, ...values) {
+        return html(strings, ...values);
     }
 }
 
